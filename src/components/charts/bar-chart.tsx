@@ -10,7 +10,7 @@ export interface BarChartPoint {
 
 export function BarChart({
   data,
-  color = "#2a78d6",
+  color = "#0b5e60",
   format = "number",
   height = 192,
 }: {
@@ -21,7 +21,8 @@ export function BarChart({
 }) {
   const formatValue = format === "currency" ? formatCurrency : (v: number) => v.toLocaleString();
   const [hovered, setHovered] = useState<number | null>(null);
-  const max = Math.max(...data.map((d) => d.value), 1);
+  // A floor of 4 keeps the five rounded ticks distinct for small counts.
+  const max = Math.max(...data.map((d) => d.value), 4);
   const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(max * f));
 
   return (
@@ -34,15 +35,15 @@ export function BarChart({
           {ticks
             .slice()
             .reverse()
-            .map((t) => (
-              <span key={t}>{t.toLocaleString()}</span>
+            .map((t, i) => (
+              <span key={i}>{t.toLocaleString()}</span>
             ))}
         </div>
 
         <div className="relative flex-1">
           <div className="absolute inset-0 flex flex-col justify-between">
-            {ticks.map((t) => (
-              <div key={t} className="border-t border-slate-100 dark:border-slate-800" />
+            {ticks.map((_, i) => (
+              <div key={i} className="border-t border-slate-100 dark:border-slate-800" />
             ))}
           </div>
 

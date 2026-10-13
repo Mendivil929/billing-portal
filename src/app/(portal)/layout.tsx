@@ -1,15 +1,29 @@
 import { PortalShell } from "@/components/portal/portal-shell";
-import { getCurrentCustomer } from "@/lib/data";
+import { getActiveCostCenter, getCostCenters } from "@/lib/cost-center";
+import { getProfile } from "@/lib/profile";
+import { getSystemStatus } from "@/lib/system-status";
 
 export default async function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const customer = await getCurrentCustomer();
+  const [profile, systemStatus, costCenters, activeCostCenter] = await Promise.all([
+    getProfile(),
+    getSystemStatus(),
+    getCostCenters(),
+    getActiveCostCenter(),
+  ]);
 
   return (
-    <PortalShell customerName={customer.name} accountNumber={customer.accountNumber}>
+    <PortalShell
+      profile={profile}
+      sidebar={{
+        systemStatus,
+        costCenters: costCenters.map(({ id, name, code }) => ({ id, name, code })),
+        activeCostCenterId: activeCostCenter?.id ?? null,
+      }}
+    >
       {children}
     </PortalShell>
   );

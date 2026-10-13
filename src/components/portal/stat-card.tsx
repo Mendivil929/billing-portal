@@ -13,25 +13,21 @@ export function StatCard({
 }) {
   const deltaColor =
     deltaDirection === "up"
-      ? "text-[#006300] dark:text-[#0ca30c]"
+      ? "text-[#006300]"
       : deltaDirection === "down"
-        ? "text-[#d03b3b]"
+        ? "text-accent-700"
         : "text-slate-500";
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-      <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-        {value}
-      </p>
+    <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5">
+      <p className="text-sm font-semibold text-slate-500">{label}</p>
+      <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{value}</p>
       {delta ? (
-        <p className={`mt-1 text-xs font-medium ${deltaColor}`}>
+        <p className={`mt-1.5 text-xs font-semibold ${deltaColor}`}>
           {deltaDirection === "up" ? "↑" : deltaDirection === "down" ? "↓" : ""} {delta}
         </p>
       ) : null}
-      {subtext ? (
-        <p className="mt-1 text-xs text-slate-400">{subtext}</p>
-      ) : null}
+      {subtext ? <p className="mt-1 text-xs text-slate-400">{subtext}</p> : null}
     </div>
   );
 }

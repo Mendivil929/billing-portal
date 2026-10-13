@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import type { Invoice, PaymentMethod } from "@/lib/types";
+import type { PaymentMethod } from "@/lib/types";
+
+export interface PayableInvoice {
+  id: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  dueDate: string | null;
+  amount: number;
+  balanceDue: number;
+}
 import { Card, CardHeader } from "@/components/portal/card";
 import { formatCurrency, formatDate } from "@/lib/format";
 
@@ -20,7 +29,7 @@ export function PaymentsWorkflow({
   customerName,
   accountNumber,
 }: {
-  invoices: Invoice[];
+  invoices: PayableInvoice[];
   customerName: string;
   accountNumber: string;
 }) {
@@ -29,7 +38,6 @@ export function PaymentsWorkflow({
   const [fileName, setFileName] = useState<string | null>(null);
   const [scheduleDate, setScheduleDate] = useState(today());
   const [amountOverride, setAmountOverride] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
 
   const selectedInvoices = invoices.filter((i) => selectedIds.has(i.id));
   const totalSelected = selectedInvoices.reduce((sum, i) => sum + i.balanceDue, 0);
@@ -51,31 +59,6 @@ export function PaymentsWorkflow({
     setFileName(null);
     setScheduleDate(today());
     setAmountOverride(null);
-    setSubmitted(false);
-  }
-
-  if (submitted) {
-    return (
-      <Card className="mx-auto max-w-lg p-8 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#0ca30c]/10">
-          <span className="text-2xl text-[#0ca30c]">✓</span>
-        </div>
-        <h2 className="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
-          Payment submitted
-        </h2>
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-          {formatCurrency(Number(amount))} scheduled for {formatDate(scheduleDate)} via{" "}
-          {PAYMENT_METHODS.find((m) => m.value === method)?.label}.
-        </p>
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-6 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
-        >
-          Make another payment
-        </button>
-      </Card>
-    );
   }
 
   return (
@@ -111,17 +94,17 @@ export function PaymentsWorkflow({
                         type="checkbox"
                         checked={selectedIds.has(invoice.id)}
                         onChange={() => toggleInvoice(invoice.id)}
-                        className="h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                        className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
                       />
                     </td>
-                    <td className="px-5 py-3 font-medium text-teal-700 dark:text-teal-400">
+                    <td className="px-5 py-3 font-medium text-brand-700 dark:text-brand-400">
                       {invoice.invoiceNumber}
                     </td>
                     <td className="px-5 py-3 text-slate-500 dark:text-slate-400">
                       {formatDate(invoice.invoiceDate)}
                     </td>
                     <td className="px-5 py-3 text-slate-500 dark:text-slate-400">
-                      {formatDate(invoice.dueDate)}
+                      {invoice.dueDate ? formatDate(invoice.dueDate) : "—"}
                     </td>
                     <td className="px-5 py-3 tabular-nums text-slate-700 dark:text-slate-300">
                       {formatCurrency(invoice.amount)}
@@ -131,6 +114,13 @@ export function PaymentsWorkflow({
                     </td>
                   </tr>
                 ))}
+                {invoices.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-10 text-center text-sm text-slate-400">
+                      You have no open invoices to pay.
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>
@@ -154,7 +144,7 @@ export function PaymentsWorkflow({
                 onClick={() => setMethod(m.value)}
                 className={`rounded-lg border p-4 text-left transition-colors ${
                   method === m.value
-                    ? "border-teal-600 bg-teal-50 dark:bg-teal-950/40"
+                    ? "border-brand-600 bg-brand-50 dark:bg-brand-950/40"
                     : "border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
                 }`}
               >
@@ -199,7 +189,7 @@ export function PaymentsWorkflow({
                 type="date"
                 value={scheduleDate}
                 onChange={(e) => setScheduleDate(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800"
               />
             </div>
           </Card>
@@ -207,22 +197,27 @@ export function PaymentsWorkflow({
 
         <Card>
           <CardHeader title="5. Submit Payment" description="Review details and submit your payment." />
-          <div className="flex gap-3 p-5">
-            <button
-              type="button"
-              disabled={selectedIds.size === 0}
-              onClick={() => setSubmitted(true)}
-              className="rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Review & Submit Payment
-            </button>
-            <button
-              type="button"
-              onClick={reset}
-              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-            >
-              Cancel
-            </button>
+          <div className="space-y-4 p-5">
+            <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              Online payment submission isn&apos;t available yet. To pay the selected invoices,
+              please contact support with the details above.
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                disabled
+                className="rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40"
+              >
+                Review & Submit Payment
+              </button>
+              <button
+                type="button"
+                onClick={reset}
+                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              >
+                Clear selection
+              </button>
+            </div>
           </div>
         </Card>
       </div>
@@ -251,7 +246,7 @@ export function PaymentsWorkflow({
                   step="0.01"
                   value={amount}
                   onChange={(e) => setAmountOverride(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm tabular-nums focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm tabular-nums focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800"
                 />
               </dd>
             </div>
@@ -275,7 +270,7 @@ export function PaymentsWorkflow({
           </p>
           <button
             type="button"
-            className="mt-3 text-xs font-medium text-teal-700 hover:underline dark:text-teal-400"
+            className="mt-3 text-xs font-medium text-brand-700 hover:underline dark:text-brand-400"
           >
             Contact Support →
           </button>

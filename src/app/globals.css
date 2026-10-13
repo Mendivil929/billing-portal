@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* The brand design is light-only; dark: utilities apply only under an explicit .dark class. */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant short (@media (max-height: 820px));
+@custom-variant tiny (@media (max-height: 620px));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-open-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-brand-50: #eaf4f4;
+  --color-brand-100: #d0e8e8;
+  --color-brand-200: #a3d1d1;
+  --color-brand-300: #6fb6b6;
+  --color-brand-400: #3d9899;
+  --color-brand-500: #167a7b;
+  --color-brand-600: #0b5e60;
+  --color-brand-700: #094d4f;
+  --color-brand-800: #073d3f;
+  --color-brand-900: #052e2f;
+  --color-brand-950: #031d1e;
+
+  --color-accent-50: #fdf0eb;
+  --color-accent-100: #fadcd1;
+  --color-accent-500: #ee5a2e;
+  --color-accent-600: #c8411e;
+  --color-accent-700: #a83518;
+  --color-accent-800: #872a13;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f6;
+  color: #1f2a2b;
+}
+
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
 }

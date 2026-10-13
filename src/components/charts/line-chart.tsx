@@ -14,7 +14,7 @@ const TOP_PADDING = 16;
 
 export function LineChart({
   data,
-  color = "#2a78d6",
+  color = "#0b5e60",
   format = "number",
   height = 200,
 }: {
@@ -25,7 +25,8 @@ export function LineChart({
 }) {
   const formatValue = format === "currency" ? formatCurrency : (v: number) => v.toLocaleString();
   const [hovered, setHovered] = useState<number | null>(null);
-  const max = Math.max(...data.map((d) => d.value), 1);
+  // A floor of 4 keeps the five rounded ticks distinct for small counts.
+  const max = Math.max(...data.map((d) => d.value), 4);
   const plotH = VIEW_H - TOP_PADDING;
 
   const points = data.map((d, i) => {
@@ -50,8 +51,8 @@ export function LineChart({
           {ticks
             .slice()
             .reverse()
-            .map((t) => (
-              <span key={t}>{t.toLocaleString()}</span>
+            .map((t, i) => (
+              <span key={i}>{t.toLocaleString()}</span>
             ))}
         </div>
 

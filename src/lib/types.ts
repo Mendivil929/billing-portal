@@ -1,58 +1,87 @@
-export type InvoiceStatus = "invoice_ready" | "sent" | "paid" | "overdue";
-
 export type PaymentMethod = "ach" | "credit_card" | "wire" | "check";
-
-export type PaymentStatus = "completed" | "pending" | "failed";
 
 export interface CurrentCustomer {
   name: string;
   accountNumber: string;
 }
 
-export interface Invoice {
+export type ArKind = "invoices" | "payments" | "credit-memos";
+
+export type ArTransactionType = "CustInvc" | "CustPymt" | "CustCred";
+
+export interface ArTransaction {
   id: string;
-  invoiceNumber: string;
-  customerName: string;
-  billingCycle: string;
-  invoiceDate: string;
-  dueDate: string;
-  amount: number;
-  balanceDue: number;
-  status: InvoiceStatus;
+  type: ArTransactionType;
+  recordType: string;
+  documentNumber: string;
+  transactionNumber: string;
+  displayName: string;
+  transactionDate: string;
+  dueDate: string | null;
+  closeDate: string | null;
+  status: { code: string; name: string };
+  currency: { id: string; name: string };
+  exchangeRate: number;
+  amounts: {
+    foreignTotal: number;
+    foreignPaid: number | null;
+    foreignUnpaid: number | null;
+    foreignPaymentUsed: number | null;
+    foreignPaymentUnused: number | null;
+    baseTotal: number;
+  };
+  memo: string | null;
+  voided: boolean;
+  lastModifiedAt: string;
 }
 
-export interface Payment {
+export interface ArListResponse {
+  costCenter: AuthCostCenter;
+  transactionType: ArTransactionType;
+  dateRange: { from: string; to: string };
+  pagination: {
+    page: number;
+    pageSize: number;
+    returned: number;
+    totalResults: number;
+    totalPages: number;
+    hasMore: boolean;
+  };
+  items: ArTransaction[];
+}
+
+export interface AuthUser {
   id: string;
-  paymentNumber: string;
-  customerName: string;
-  date: string;
-  amount: number;
-  method: PaymentMethod;
-  appliedInvoices: string[];
-  status: PaymentStatus;
+  email: string;
+  displayName: string;
+  userType: string;
+  mustChangePassword: boolean;
+  lastLoginAt: string;
 }
 
-export type AgingBucketKey = "0-15" | "16-30" | "31-45" | "46+";
-
-export interface AgingByCustomer {
-  customerName: string;
-  buckets: Record<AgingBucketKey, number>;
-  totalBalance: number;
+export interface AuthClient {
+  id: string;
+  code: string;
+  name: string;
 }
 
-export interface WeeklyBillingSummary {
-  weekLabel: string;
-  weekShort: string;
-  invoicesIssued: number;
-  totalBilled: number;
-  creditsAdjustments: number;
-  collected: number;
-  status: "completed" | "in_progress";
+export interface AuthCostCenter {
+  id: string;
+  code: string;
+  name: string;
+  client: AuthClient;
 }
 
-export interface DashboardMetrics {
-  openBalance: number;
-  pastDue: number;
-  totalInvoices: number;
-  dueThisCycle: number;
+export interface LoginResponse {
+  accessToken: string;
+  tokenType: string;
+  user: AuthUser;
+  client: AuthClient | null;
+  costCenters: AuthCostCenter[];
+}
+
+export interface MeResponse {
+  user: AuthUser;
+  client: AuthClient | null;
+  costCenters: AuthCostCenter[];
 }
