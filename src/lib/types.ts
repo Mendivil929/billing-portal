@@ -84,6 +84,4 @@ export interface MeResponse {
   user: AuthUser;
   client: AuthClient | null;
   costCenters: AuthCostCenter[];
-  /** CatalogsDB.dbo.portal_login.Proyecto; selects the client in the ClicData HR dashboard. */
-  clicdataClient?: string | null;
 }

@@ -1,17 +1,39 @@
 import "server-only";
+import { cache } from "react";
+import { apiFetch, ApiError } from "@/lib/api-client";
 import { requireSession } from "@/lib/auth";
+import { getActiveCostCenter } from "@/lib/cost-center";
 
-const DASHBOARD_URL = process.env.CLICDATA_HR_DASHBOARD_URL;
-
-// The client always comes from the session, never from the request, so a user
-// cannot point the dashboard at another client's data.
-export async function getHrDashboardUrl(): Promise<string | null> {
-  const session = await requireSession();
-  const client = session.me.clicdataClient?.trim();
-  if (!DASHBOARD_URL || !client) return null;
-
-  const url = new URL(DASHBOARD_URL);
-  url.search = "";
-  url.searchParams.set("Cliente", client);
-  return url.toString();
+interface ClicDataLink {
+  provider: string;
+  costCenterId: string;
+  url: string;
 }
+
+// Only ever redirect to ClicData itself, even if the backend returned something else.
+function isClicDataUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && url.hostname.endsWith(".clicdata.com");
+  } catch {
+    return false;
+  }
+}
+
+// The backend builds and authorizes the link for the session's cost center, so the
+// client can never be chosen from the request.
+export const getHrDashboardUrl = cache(async (): Promise<string | null> => {
+  const [session, costCenter] = await Promise.all([requireSession(), getActiveCostCenter()]);
+  if (!costCenter) return null;
+
+  try {
+    const link = await apiFetch<ClicDataLink>("/api/v1/external-access/clicdata", {
+      token: session.token,
+      headers: { "X-Cost-Center-Id": costCenter.id },
+    });
+    return isClicDataUrl(link.url) ? link.url : null;
+  } catch (error) {
+    if (error instanceof ApiError && (error.status === 403 || error.status === 404)) return null;
+    throw error;
+  }
+});

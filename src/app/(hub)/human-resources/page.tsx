@@ -25,11 +25,11 @@ export default async function HumanResourcesPage({
 
   return (
     <HubHero title="Human Resources" subtitle="Your team's workforce information.">
-      <div className="max-w-xl rounded-2xl bg-white p-8 shadow-xl shadow-black/10">
-        <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
+      <div className="max-w-xl rounded-2xl bg-white p-8 shadow-xl shadow-black/10 short:p-6 tiny:p-5">
+        <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent-50 text-accent-600 tiny:h-11 tiny:w-11">
           <DashboardIcon className="h-7 w-7" />
         </span>
-        <h2 className="mt-6 text-2xl font-bold text-slate-900">Workforce dashboard</h2>
+        <h2 className="mt-6 text-2xl font-bold text-slate-900 short:mt-4 tiny:text-xl">Workforce dashboard</h2>
         <p className="mt-2 text-sm text-slate-600">
           Your Human Resources dashboard, prepared for your account. It opens in a new tab.
         </p>
@@ -38,7 +38,7 @@ export default async function HumanResourcesPage({
           href="/human-resources/dashboard"
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-8 inline-flex items-center gap-2 rounded-lg bg-accent-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-700"
+          className="mt-8 inline-flex items-center gap-2 rounded-lg bg-accent-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-700 short:mt-6 tiny:mt-4"
         >
           Open dashboard
           <ArrowRightIcon className="h-4 w-4" />
