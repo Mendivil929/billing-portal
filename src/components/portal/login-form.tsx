@@ -22,8 +22,10 @@ export function LoginForm() {
         <input
           id="email"
           name="email"
-          type="email"
+          type="text"
           autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
           required
           className={inputClass}
         />

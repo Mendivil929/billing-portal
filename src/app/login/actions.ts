@@ -5,6 +5,8 @@ import { apiFetch, ApiError } from "@/lib/api-client";
 import { createSession, deleteSession, getSessionToken } from "@/lib/session";
 import type { LoginResponse } from "@/lib/types";
 
+const CLIENT_EMAIL_DOMAIN = "tecma.com";
+
 export interface LoginFormState {
   error?: string;
 }
@@ -13,7 +15,9 @@ export async function login(
   _prevState: LoginFormState,
   formData: FormData
 ): Promise<LoginFormState> {
-  const email = String(formData.get("email") ?? "").trim();
+  const user = String(formData.get("email") ?? "").trim();
+  // Client accounts sign in with their short user (CatalogsDB.dbo.portal_login.Usuario).
+  const email = user && !user.includes("@") ? `${user.toLowerCase()}@${CLIENT_EMAIL_DOMAIN}` : user;
   const password = String(formData.get("password") ?? "");
   const stayLoggedIn = formData.get("stayLoggedIn") === "on";
 
