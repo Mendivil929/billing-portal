@@ -24,7 +24,7 @@ export default async function HumanResourcesPage({
   }
 
   return (
-    <HubHero title="Human Resources" subtitle="Your team's workforce information.">
+    <HubHero title="Human Resources" subtitle="Your team's workforce information." backHref="/home">
       <div className="max-w-xl rounded-2xl bg-white p-8 shadow-xl shadow-black/10 short:p-6 tiny:p-5">
         <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent-50 text-accent-600 tiny:h-11 tiny:w-11">
           <DashboardIcon className="h-7 w-7" />

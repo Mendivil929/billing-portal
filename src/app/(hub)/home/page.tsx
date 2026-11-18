@@ -13,7 +13,7 @@ const MODULES = [
   {
     title: "Finance",
     description: "Keep track of billing and your account's financial status.",
-    features: ["Invoices and credit notes", "Account statements and payments", "Quotes and orders"],
+    features: ["Invoices and credit notes", "Account statements and payments"],
     href: "/dashboard",
     Icon: ChartUpIcon,
     iconClass: "bg-brand-50 text-brand-600",
@@ -21,9 +21,10 @@ const MODULES = [
     buttonClass: "bg-brand-600 hover:bg-brand-700",
   },
   {
-    title: "Compliance",
-    description: "Manage regulatory documentation and legal compliance.",
-    features: ["Certificates and approvals", "Current policies and regulations", "Audits and follow-up"],
+    title: "Customs and Compliance",
+    description:
+      "Southbound and northbound movement information and management of regulatory documentation and legal compliance.",
+    features: ["Movements information", "Inventory and balances"],
     href: "/compliance",
     Icon: ShieldCheckIcon,
     iconClass: "bg-neutral-100 text-neutral-600",
@@ -33,7 +34,13 @@ const MODULES = [
   {
     title: "Human Resources",
     description: "Access employment information and manage your team.",
-    features: ["Payslips and employment documents", "Time off and absences", "Training and workforce"],
+    features: [
+      "Headcount information",
+      "Turnover",
+      "Absenteeism",
+      "Medical leaves",
+      "Training compliance",
+    ],
     href: "/human-resources",
     Icon: UsersIcon,
     iconClass: "bg-accent-50 text-accent-600",
@@ -47,7 +54,7 @@ export default async function HomePage() {
 
   return (
     <HubHero
-      title={`Hello, ${profile.firstName}`}
+      title={`Hello, ${profile.companyName}`}
       subtitle="Choose the module you want to work with."
     >
       <nav aria-label="Modules" className="space-y-3 md:hidden tiny:space-y-2.5">
@@ -83,19 +90,19 @@ export default async function HomePage() {
         {MODULES.map((module) => (
           <article
             key={module.title}
-            className="flex flex-col rounded-2xl bg-white p-7 shadow-xl shadow-black/10 short:p-6"
+            className="flex flex-col rounded-2xl bg-white p-7 shadow-xl shadow-black/10 short:p-5"
           >
             <span
-              className={`flex h-13 w-13 items-center justify-center rounded-xl short:h-11 short:w-11 ${module.iconClass}`}
+              className={`flex h-13 w-13 items-center justify-center rounded-xl short:h-10 short:w-10 ${module.iconClass}`}
             >
               <module.Icon className="h-6 w-6" />
             </span>
-            <h2 className="mt-5 text-2xl font-bold text-slate-900 short:mt-4 short:text-xl">
+            <h2 className="mt-5 text-2xl font-bold text-slate-900 short:mt-3 short:text-xl">
               {module.title}
             </h2>
             <p className="mt-2 text-sm text-slate-600 short:mt-1.5">{module.description}</p>
 
-            <ul className="mt-5 flex-1 space-y-3 border-t border-slate-200 pt-5 short:mt-4 short:space-y-2 short:pt-4">
+            <ul className="mt-5 flex-1 space-y-3 border-t border-slate-200 pt-5 short:mt-3 short:space-y-1.5 short:pt-3">
               {module.features.map((feature) => (
                 <li key={feature} className="flex items-center gap-3 text-sm text-slate-700">
                   <CheckIcon className={`h-4 w-4 shrink-0 ${module.checkClass}`} />
@@ -106,7 +113,7 @@ export default async function HomePage() {
 
             <Link
               href={module.href}
-              className={`mt-6 flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-white transition short:mt-5 short:py-2.5 ${module.buttonClass}`}
+              className={`mt-6 flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-white transition short:mt-4 short:py-2.5 ${module.buttonClass}`}
             >
               Go to {module.title}
               <ArrowRightIcon className="h-4 w-4" />
