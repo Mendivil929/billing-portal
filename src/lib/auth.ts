@@ -25,6 +25,8 @@ export const getSession = cache(async (): Promise<Session | null> => {
 
 export async function requireSession(): Promise<Session> {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) {
+    redirect((await getSessionToken()) ? "/api/auth/session-expired" : "/login");
+  }
   return session;
 }
